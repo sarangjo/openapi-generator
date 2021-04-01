@@ -38,6 +38,19 @@ namespace Org.OpenAPITools.Test
 
         private long petId = 11088;
 
+        JsonSerializerSettings serializerSettings = new JsonSerializerSettings
+        {
+            // OpenAPI generated types generally hide default constructors.
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy
+                {
+                    OverrideSpecifiedNames = false
+                }
+            }
+        };
+
         /// <summary>
         /// Create a Pet object
         /// </summary>
@@ -347,24 +360,20 @@ namespace Org.OpenAPITools.Test
         public void TestArrayOfString()
         {
             ArrayTest at = new ArrayTest();
-            JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-            {
-                // OpenAPI generated types generally hide default constructors.
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy
-                    {
-                        OverrideSpecifiedNames = false
-                    }
-                }
-            };
-            Assert.Equal("{}", JsonConvert.SerializeObject(at, _serializerSettings));
+
+            Assert.Equal("{}", JsonConvert.SerializeObject(at, serializerSettings));
 
             at.ArrayOfString = new List<string> { "Something here ..." };
 
-            Assert.Equal("{\"array_of_string\":[\"Something here ...\"]}", JsonConvert.SerializeObject(at, _serializerSettings));
+            Assert.Equal("{\"array_of_string\":[\"Something here ...\"]}", JsonConvert.SerializeObject(at, serializerSettings));
 
+        }
+
+        [Fact]
+        public void TestPet()
+        {
+            Pet p = new Pet(name: "Csharp test", photoUrls: new List<string> { "http://petstore.com/csharp_test" });
+            Assert.Equal("{\"name\":\"Csharp test\",\"photoUrls\":[\"http://petstore.com/csharp_test\"]}", JsonConvert.SerializeObject(p, serializerSettings));
         }
 
         public void Dispose()

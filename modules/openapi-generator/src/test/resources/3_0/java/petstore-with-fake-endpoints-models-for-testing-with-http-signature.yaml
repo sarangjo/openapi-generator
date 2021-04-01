@@ -1330,6 +1330,9 @@ components:
           x-is-unique: true
         category:
           $ref: '#/components/schemas/Category'
+          "readOnly": true,
+          "x-omitempty": true,
+          "x-since": "2021-03-23"
         name:
           type: string
           example: doggie
