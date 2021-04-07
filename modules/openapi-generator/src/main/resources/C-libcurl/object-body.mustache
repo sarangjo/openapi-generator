@@ -10,22 +10,30 @@ object_t *object_create() {
 }
 
 void object_free(object_t *object) {
+    if (object) {
+        cJSON_Delete(object->temporary);
+    }
     free (object);
 }
 
 cJSON *object_convertToJSON(object_t *object) {
-    cJSON *item = cJSON_CreateObject();
+    if (object) {
+        if (!object->temporary) {
+            object->temporary = cJSON_CreateObject();
+        }
+        return object->temporary;
+    }
 
-    return item;
-fail:
-    cJSON_Delete(item);
     return NULL;
 }
 
 object_t *object_parseFromJSON(char *jsonString){
-    object_t *object = NULL;
+    object_t *object = object_create();
+    if (!object) {
+        return object;
+    }
 
+    object->temporary = cJSON_Parse(jsonString);
     return object;
-end:
-    return NULL;
 }
+
